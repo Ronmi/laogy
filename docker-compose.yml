@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  db:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=laogy
+    volumes:
+      - ./db:/var/lib/mysql
+  web:
+    image: golang
+    environment:
+      - MYSQL_DSN=root:1234@(db:3306)/laogy?parseTime=true
+    volumes:
+      - ./:/src
+    ports:
+      - 20008:80
+    command: "bash -c 'mkdir -p /go/src/laogy;cp /src/*.go /go/src/laogy/;cd /go/src/laogy;go get -v ./...;go run *.go'"
