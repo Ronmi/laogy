@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8">
+    <title>URL shorten service</title>
+    <script>
+     function copy() {
+	 var res = document.getElementById("shorturl");
+	 var sel = getSelection();
+	 sel.empty();
+	 var rng = document.createRange();
+	 rng.selectNode(res);
+	 sel.addRange(rng);
+	 document.execCommand("Copy");
+     }
+     function shorten() {
+	 var div = document.getElementById("result");
+	 var url = document.getElementById("url");
+	 var pw  = document.getElementById("secret");
+	 var btn = document.getElementById("btn");
+	 var xhr = new XMLHttpRequest();
+
+	 btn.setAttribute("disabled", "disabled");
+	 xhr.open("POST", "s");
+	 xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	 xhr.onreadystatechange = function() {
+	     if(xhr.readyState !== XMLHttpRequest.DONE) return;
+	     if (xhr.status === 200) {
+		 try {
+		     var res = JSON.parse(xhr.responseText);
+		     var url = location.protocol+'//'+location.host+'/'+res.data.code;
+		     var html = '<div><span id="shorturl">'+url+'</span> <button onclick="copy();">Copy</button></div>';
+		     html += '<div><img src="https://chart.googleapis.com/chart?cht=qr&chs=256x256&chl=' + encodeURIComponent(url) + '" /></div>';
+		     
+		     div.innerHTML = html;
+		     url.value = '';
+		     pw.value = '';
+		     btn.removeAttribute("disabled");
+		 } catch (e) {
+		     alert("Server error, please try again later");
+		 }
+		 return;
+	     }
+
+	     alert("Error shorten url: " + xhr.status + ' ' + xhr.responseText);
+	 };
+	 xhr.send('url='+encodeURIComponent(url.value)+'&secret='+encodeURIComponent(pw.value));
+     }
+    </script>
+  </head>
+  <body>
+    Paste your URL: <input type="text" id="url" /><br />
+    Secret: <input type="password" id="secret" /><br />
+    <button onclick="shorten();" id="btn">OK</button>
+    <hr />
+    <div id="result"></div>
+  </body>
+</html>
