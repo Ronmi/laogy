@@ -29,14 +29,17 @@ func init() {
 
 func redirectHandler(w http.ResponseWriter, r *http.Request) {
 	code := r.URL.Path[1:]
+	msg := []byte(code + " not found")
 	if !validator.MatchString(code) {
 		w.WriteHeader(404)
+		w.Write(msg)
 		return
 	}
 
 	data := load(code)
 	if data == nil {
 		w.WriteHeader(404)
+		w.Write(msg)
 		return
 	}
 

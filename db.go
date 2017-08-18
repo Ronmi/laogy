@@ -56,7 +56,6 @@ func initStmt(db *sql.DB) {
 
 func save(d URLData) error {
 	res, err := stmtIns.Exec(d.ID, d.URL)
-	defer stmtIns.Close()
 	if err != nil {
 		return err
 	}
@@ -72,7 +71,6 @@ func load(id string) *URLData {
 	var raw string
 	var t time.Time
 	row := stmtSel.QueryRow(id)
-	defer stmtSel.Close()
 
 	if err := row.Scan(&raw, &t); err != nil {
 		return nil
