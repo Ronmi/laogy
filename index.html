@@ -8,9 +8,7 @@
 	 var res = document.getElementById("shorturl");
 	 var sel = getSelection();
 	 sel.empty();
-	 var rng = document.createRange();
-	 rng.selectNode(res);
-	 sel.addRange(rng);
+	 sel.selectAllChildren(res);
 	 document.execCommand("Copy");
      }
      function shorten() {
