@@ -16,6 +16,8 @@ export SHARED_SECRET='hackme'
 docker run -d --name laogy -e 'MYSQL_DSN=user:password@(mysql.server:3306)/test?parseTime=true' -e TOTP_SECRET=feed5eed0fdead70beef -p 8000:80 -v `pwd`/laogy:/laogy debian:stable-slim /laogy
 ```
 
+You might want to take a llok at `docker-compose.yml`, `nginx.conf` and `index.html` as examples.
+
 # Configurations
 
 To best fit in container, configurations are passed through envvar.
