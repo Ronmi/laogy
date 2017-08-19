@@ -36,5 +36,6 @@ Submit a request (can be `GET` or `POST`) to `http://your.server/s` with followi
 
 - `url`: The url to be processed.
 - `secret`: Your password setted in `SHARED_SERET` or app generated one if you're using `TOTP_SECRET`. You can bypass this parameter if authenticating is not enabled.
+- `g-recaptcha-response`: Only used with Google reCAPTCHA, see [official documentation](https://developers.google.com/recaptcha/docs/verify) for detail.
 
 If success, it returns a JSON-encoded object with `{"data":{"code":"mycode"}}`. Otherwise a 4xx or 5xx HTTP status code is returned.
