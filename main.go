@@ -62,6 +62,7 @@ func main() {
 	}
 	sharedSecret := os.Getenv("SHARED_SECRET")
 	totpSecret := os.Getenv("TOTP_SECRET")
+	recaptchaSecret := os.Getenv("RECAPTCHA_SECRET")
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -75,8 +76,9 @@ func main() {
 	initStmt(db)
 
 	http.Handle("/s", postHandler{
-		sharedSecret: sharedSecret,
-		otpConfig:    getConfig(totpSecret),
+		sharedSecret:    sharedSecret,
+		otpConfig:       getConfig(totpSecret),
+		reCAPTCHASecret: recaptchaSecret,
 	})
 	http.HandleFunc("/", rootHandler)
 
