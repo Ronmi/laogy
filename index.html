@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf8">
     <title>URL shorten service</title>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
     <script>
      function copy() {
 	 var res = document.getElementById("shorturl");
@@ -42,13 +43,15 @@
 
 	     alert("Error shorten url: " + xhr.status + ' ' + xhr.responseText);
 	 };
-	 xhr.send('url='+encodeURIComponent(url.value)+'&secret='+encodeURIComponent(pw.value));
+	 xhr.send('url='+encodeURIComponent(url.value)+'&secret='+encodeURIComponent(pw.value)+'&g-recaptcha-response='+encodeURIComponent(grecaptcha.getResponse()));
+	 grecaptcha.reset();
      }
     </script>
   </head>
   <body>
     Paste your URL: <input type="text" id="url" /><br />
     Secret: <input type="password" id="secret" /><br />
+    <div class="g-recaptcha" data-sitekey="YOUR SITEKEY"></div>
     <button onclick="shorten();" id="btn">OK</button>
     <hr />
     <div id="result"></div>
