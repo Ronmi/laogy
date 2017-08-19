@@ -28,6 +28,7 @@ To best fit in container, configurations are passed through envvar.
 - `TOTP_SECRET`: A 10 bytes, hexdecimal encoded data as secret to authenticates user with TOTP password (use with Google Authenticator). Leave it unset to disable. This takes precedence over shared password.
 - `TOTP_USER`: Username displayed in your TOTP app. Default to "admin".
 - `TOTP_ISSUER`: Issuer displayed in your TOTP app. Default to "my URL shorter".
+- `RECAPTCHA_SECRET`: Secret key of Google reCAPTCHA. Leave it unset to disable.
 
 # Shorten an url
 
