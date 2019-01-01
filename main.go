@@ -63,6 +63,7 @@ func main() {
 	sharedSecret := os.Getenv("SHARED_SECRET")
 	totpSecret := os.Getenv("TOTP_SECRET")
 	recaptchaSecret := os.Getenv("RECAPTCHA_SECRET")
+	ga := os.Getenv("GAID")
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -80,7 +81,7 @@ func main() {
 		otpConfig:       getConfig(totpSecret),
 		reCAPTCHASecret: recaptchaSecret,
 	})
-	http.HandleFunc("/", rootHandler)
+	http.HandleFunc("/", (&Redir{GAID: ga}).rootHandler)
 
 	if err := http.ListenAndServe(bind, nil); err != nil {
 		log.Print(err)

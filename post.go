@@ -102,18 +102,29 @@ func (h postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := URLData{
+	data := &URLData{
 		URL: raw,
 	}
+	data.computeHash()
 	for {
 		data.ID = GenCode()
-		if err := save(data); err == nil {
-			break
-		} else {
-			log.Printf("error saving ID %s: %s", data.ID, err)
+		if err := save(data); err != nil {
+			if _, ok := err.(DupErr); ok {
+				x := loadbyhash(data.Hashsum)
+				if x == nil {
+					continue
+				}
+				data = x
+				break
+			} else {
+				log.Printf("error saving ID %s: %s", data.ID, err)
+			}
 		}
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write([]byte(strings.Replace(tmpl, "%s", data.ID, 1)))
+
+	id := data.ID
+	go upd(id)
 }
