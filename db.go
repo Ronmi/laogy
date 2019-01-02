@@ -7,6 +7,8 @@ import (
 	"encoding/hex"
 	"log"
 	"time"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 const (
@@ -21,9 +23,9 @@ type URLData struct {
 	Visited time.Time
 }
 
-func (d *URLData) computeHash() string {
+func (d *URLData) computeHash() {
 	sum := md5.Sum([]byte(d.URL))
-	return hex.EncodeToString(sum[:])
+	d.Hashsum = hex.EncodeToString(sum[:])
 }
 
 func createTable(db *sql.DB) error {
@@ -80,13 +82,15 @@ func (e DupErr) Error() string {
 }
 
 func save(d *URLData) error {
-	res, err := stmtIns.Exec(d.ID, d.URL, d.Hashsum)
+	_, err := stmtIns.Exec(d.ID, d.URL, d.Hashsum)
 	if err != nil {
-		return err
-	}
-
-	if cnt, _ := res.RowsAffected(); cnt != 1 {
-		return DupErr{}
+		e, ok := err.(*mysql.MySQLError)
+		if !ok {
+			return err
+		}
+		if e.Number == 1062 {
+			return DupErr{}
+		}
 	}
 
 	return nil
