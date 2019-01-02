@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"crypto/md5"
 	"crypto/rand"
 	"database/sql"
 	"encoding/hex"
 	"log"
+	"net/url"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -23,9 +25,33 @@ type URLData struct {
 	Visited time.Time
 }
 
-func (d *URLData) computeHash() {
-	sum := md5.Sum([]byte(d.URL))
+func (d *URLData) computeHash() (ok bool) {
+	u, err := url.Parse(d.URL)
+	if err != nil {
+		return false
+	}
+	// generate sorted url
+	buf := &bytes.Buffer{}
+	buf.WriteString(u.Scheme)
+	buf.WriteString("://")
+	if u.User != nil {
+		buf.WriteString(u.User.String())
+		buf.WriteString("@")
+	}
+	buf.WriteString(u.Host)
+	buf.WriteString(u.Path)
+	if u.RawQuery != "" {
+		buf.WriteString("?")
+		buf.WriteString(u.Query().Encode())
+	}
+	if u.Fragment != "" {
+		buf.WriteString("#")
+		buf.WriteString(u.Fragment)
+	}
+
+	sum := md5.Sum(buf.Bytes())
 	d.Hashsum = hex.EncodeToString(sum[:])
+	return true
 }
 
 func createTable(db *sql.DB) error {
