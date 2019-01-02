@@ -96,7 +96,7 @@ func (h postHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	raw := r.Form.Get("url")
+	raw := strings.TrimSpace(r.Form.Get("url"))
 	if raw == "" {
 		http.Redirect(w, r, "/", 302)
 		return
